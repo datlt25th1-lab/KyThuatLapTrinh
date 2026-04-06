@@ -4,6 +4,15 @@ using namespace std;
 struct Author {
     int id;
     string name;
+    friend istream& operator>>(istream& in, Author& a) {
+        cout << "Author information:" << endl;
+        cout << "\t+ Id:";
+        in >> a.id;
+        cout << "\t+ Name:";
+        in.ignore();
+        getline(in, a.name);
+        return in;
+    }
 };
 struct Book {
     int id;
@@ -16,10 +25,24 @@ struct Book {
         os << "\t+ Author name:" << b.author.name << endl;
         return os;
     }
+    friend istream& operator>>(istream& in, Book& b) {
+        cout << "Book information:" << endl;
+        cout << "\t+ Id:";
+        in >> b.id;
+        cout << "\t+ Name:";
+        in.ignore();
+        getline(in, b.name);
+        in >> b.author;
+        return in;
+    }
 };
 struct Node {
     Book data;
     Node* next;
+    void Create(Book b) {
+        data = b;
+        next = nullptr;
+    }
 };
 struct LinkedList {
     Node* head;
@@ -33,6 +56,50 @@ struct LinkedList {
             cout << item->data;
             item = item->next;
         }
+    }
+    void AddFirst(Node* p) {
+        p->next = head;
+        head = p;
+    }
+    bool Remove(int removeId) {
+        if (head == NULL) {
+            cout << "No book available" << endl;
+            return true;
+
+        }
+        Node* item = head;
+        if (item->data.id == removeId) {
+            head = item->next;
+            delete item;
+            return true;
+        }
+        while (item->next != NULL) {
+            if (item->next->data.id == removeId) {
+                Node* temp = item->next;
+                item->next = item->next->next;
+                delete temp;
+                return true;
+            }
+            item = item->next;
+        }
+    }
+    bool Update(int updateId) {
+        if (head == NULL) {
+            cout << "No book available" << endl;
+            return false;
+        }
+        Node* item = head;
+        while (item != NULL) {
+            if (item->data.id == updateId) {
+                cin >> item->data;
+                return true;
+
+            }
+            item = item->next;
+
+
+        }
+        return false;
     }
 };
 
@@ -60,19 +127,34 @@ int main()
             break;
         }
         case 2: {
+            Book b;
+            cin >> b;
+            Node* newNode = new Node;
+            newNode->Create(b);
+            books.AddFirst(newNode);
 
             break;
         }
         case 3: {
-
+            int removeId;
+            cout << "Enter book`s id to remove:";
+            cin >> removeId;
+            bool res = books.Remove(removeId);
+            if (res)
+                cout << "Remove book successfully" << endl;
+            else
+                cout << "Invalid book id" << endl;
             break;
         }
         case 4: {
-
+            int updateId;
+            cout << "Enter book`s id to update:";
+            cin >> updateId;
+            books.Update(updateId);
             break;
         }
         case 5: {
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
             break;
         }
         case 6: {
